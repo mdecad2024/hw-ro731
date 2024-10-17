@@ -13,7 +13,7 @@
 <p style="padding-left: 30px;">以 "學號@nfu.edu.tw" 登入 <a href="https://login.microsoftonline.com/">https://login.microsoftonline.com/</a> Office 365</p>
 <p style="padding-left: 30px;">Teams 團隊代碼: <span>7pg9z7u</span></p>
 <p>個人倉儲:<a href="https://github.com/mdecad2024/hw-ro731">https://github.com/mdecad2024/hw-ro731</a></p>
-<p>個人網站:<a href="https://github.com/mdecad2024/hw-ro731">https://mdecad2024.github.io/hw-ro731</a></p>
+<p>個人網站:<a href="https://mdecad2024.github.io/hw-ro731/content/index.html">https://mdecad2024.github.io/hw-ro731/content/index.html</a></p>
 <p>其他資訊</p>
 <h1>Attendance</h1>
 <p>出席 (10%) - 自行舉證評分</p>
@@ -50,6 +50,108 @@
 <h2>W1</h2>
 <p>為影片加上字幕-&gt;<span>利用 Codespaces 維護作業網站</span></p>
 <p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/O52Erv0ib0U?si=WF8V9QVj4JOediqh" title="YouTube video player" width="560"></iframe></p>
+<h2>STL VIEWER</h2>
+<div style="width: 800px; margin: auto; position: relative; font-size: 9pt; color: #777777;"><canvas height="600" id="cv" style="border: 1px solid;" width="800"></canvas>
+<div id="tip" style="display: block; color: #000000; padding: 5px; position: absolute; left: 10px; top: 550px; background-color: #c0c0c0; height: 32px; width: 250px; border-radius: 5px; border: 1px solid #000000; font-family: Arial,sans-serif; opacity: 0.5;">Drag mouse to rotate <br/> Drag mouse with shift pressed to zoom</div>
+</div>
+<h2>View Edit</h2>
+<div style="width: 800px; margin-left: 50px; height: 70px; border: 1px solid;">Model Color:<input id="mdlClr" onchange="changeOption('ModelColor',this.value)" style="margin-right: 50px;" type="color" value="#00ff40"/> Back Color1:<input id="bckClr1" onchange="changeOption('BackgroundColor1',this.value)" style="margin-right: 50px;" type="color"/> Back Color2:<input id="bckClr2" onchange="changeOption('BackgroundColor2',this.value)" type="color"/><br/> Render Mode:<select id="render" onchange="changeOption('RenderMode',this.value)" style="margin-right: 50px;">
+<option>Flat</option>
+<option>Point</option>
+<option>Wireframe</option>
+<option>Smooth</option>
+</select>Definition:<select id="defini" onchange="changeOption('Definition',this.value)">
+<option>Standard</option>
+<option>low</option>
+<option>high</option>
+</select></div>
+<p><br/> This web application do not support the InternetExplorer.</p>
+<script type="text/javascript">
+    var viewer3d;
+    function getOptions(){
+        var mc = document.getElementById("mdlClr").value;
+        var bc1 = document.getElementById("bckClr1").value;
+        var bc2 = document.getElementById("bckClr2").value;
+        var ren = document.getElementById("render").value;
+        var def = document.getElementById("defini").value;
+        return {ModelColor: mc,
+                BackgroundColor1: bc1,
+                BackgroundColor2: bc2,
+                RenderMode: ren,
+                Definition: def};
+    }
+    function readSTLfile(opt){
+        var canvas = document.getElementById('cv');
+        viewer3d = new JSC3D.Viewer(canvas);
+        viewer3d.setParameter('SceneUrl', opt.SceneUrl);
+        viewer3d.setParameter('InitRotationX', 0);
+        viewer3d.setParameter('InitRotationY', 0);
+        viewer3d.setParameter('InitRotationZ', 0);
+        viewer3d.setParameter('ModelColor', opt.ModelColor);
+        viewer3d.setParameter('BackgroundColor1', opt.BackgroundColor1);
+        viewer3d.setParameter('BackgroundColor2', opt.BackgroundColor2);
+        viewer3d.setParameter('RenderMode', opt.RenderMode);
+        viewer3d.setParameter('Definition', opt.Definition);
+        viewer3d.init();
+        viewer3d.update();
+    }
+    function changeOption(strOpt,strValue){
+    console.log("change " + strOpt + " to " + strValue);
+        viewer3d.setParameter(strOpt, strValue);
+        viewer3d.init();
+        viewer3d.update();
+    }
+    function openByUrl(){
+        var url = document.getElementById("url").value;
+        var opt = getOptions();
+        opt.SceneUrl = document.getElementById("url").value;
+        readSTLfile(opt);
+    }
+    function openByPass(){
+        var pass = document.getElementById("url").value;
+        var opt = getOptions();
+        var fs = document.getElementById("pass").files;
+        var f = fs[0];
+        var reader = new FileReader();
+        reader.onload = (function(theFile) {
+            return function(e) {            
+                opt.SceneUrl = e.target.result;
+                console.log(opt.SceneUrl);
+                readSTLfile(opt);
+            };
+        })(f);
+        reader.readAsDataURL(f);
+    }
+    function openByGet(){
+        var q = GetQueryString();
+        console.log(q);
+        var url = q.src;
+        var opt = getOptions();
+        opt.SceneUrl = url;
+        readSTLfile(opt);
+    }
+    function GetQueryString(){
+        if( 1 < window.location.search.length )
+        {
+            var query = window.location.search.substring( 1 );
+            var parameters = query.split( '&' );
+            var result = new Object();
+            for( var i = 0; i < parameters.length; i++ )
+            {
+                var element = parameters[ i ].split( '=' );
+                var paramName = decodeURIComponent( element[ 0 ] );
+                var paramValue = decodeURIComponent( element[ 1 ] );
+                result[ paramName ] = decodeURIComponent( paramValue );
+            }
+            return result;
+        }
+        return null;
+    }
+    window.onload = function(){
+        openByGet();
+    }
+</script>
+<p></p>
 <p></p><h1>HW2</h1>
 <p>Homework 2 (10%):</p>
 <p style="padding-left: 30px;">利用 Solvespace 與 NX 建立 <a href="https://mde.tw/cad2024/content/BonW.html">Balance on Wheels</a> 組立件</p>
