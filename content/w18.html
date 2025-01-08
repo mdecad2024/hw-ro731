@@ -143,11 +143,59 @@ img.add_border {
         </header>
     <div id="tipue_search_content">HW1_Exam << <a href='HW1_Exam.html'>Previous</a> <a href='w15.html'>Next</a> >> w15<br /><h1>w18</h1>
 <p>CoppeliaSim: <a href="https://s104.cycu.org/~41023103/pinball_1.ttt">場景1.ttt</a></p>
-<p><span>先在</span><span>CoppeliaSim把我們組所繪製的彈珠台全部零件組裝後匯入，用程式碼下去試著做動，才發現需要再增加一些約束。</span></p>
+<p><span>先在</span><span>CoppeliaSim把我們組每個人分別所繪製的彈珠台全部零件匯入組裝後，用程式碼下去試著做動，才發現需要再增加一些約束。</span></p>
 <p><img alt="" height="265" src="./../images/pin1.png" width="400"/></p>
 <p>CoppeliaSim: <a href="https://s104.cycu.org/~41023103/pinball_2.ttt">場景2.ttt</a></p>
 <p><span>後來為了讓撥桿正常運作，反反覆覆多次改寫程式後，撥桿還是無法正常動作，並且在執行程式做動的地方會出現警示號。</span></p>
-<p><img alt="" height="265" src="./../images/pin2.png" width="400"/></p><br />HW1_Exam << <a href='HW1_Exam.html'>Previous</a> <a href='w15.html'>Next</a> >> w15</div>
+<p><img alt="" height="265" src="./../images/pin2.png" width="400"/></p>
+<p>程式碼如下:</p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false"># pip install pyzmq cbor keyboard
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
+import keyboard
+
+# Connecting to the CoppeliaSim server
+client = RemoteAPIClient('localhost', 23000)
+
+print('Program started')
+sim = client.getObject('sim')
+
+# Get the handle for the slider (prismatic joint)
+cw= sim.getObject('/prismatic_joint')
+kicker= sim.getObject('/w16')
+
+# Starting the simulation
+sim.startSimulation()
+print('Simulation started')
+
+# Main control loop
+def main():
+    # Keep running until simulation is stopped
+    while True:
+        if keyboard.is_pressed('p'):  # Move slider to -0.15 position
+            print("p is pressed")
+            sim.setJointTargetPosition(cw, -0.4)
+        
+        if keyboard.is_pressed('l'):  # Reset slider to the original position
+            print("l is pressed")
+            sim.setJointTargetPosition(cw, 0.0)  # Reset to the initial position
+                
+        if keyboard.is_pressed('h'):  # set kicker to shot
+            print("h is pressed")
+            sim.setJointTargetPosition(kicker, 0.3)
+            
+        if keyboard.is_pressed('b'):  # set kicker to shot
+            print("h is pressed")
+            sim.setJointTargetPosition(kicker, 0.0)
+
+        if keyboard.is_pressed('t'):  # Stop the simulation when 'q' is pressed
+            print("t is pressed - stopping simulation")
+            sim.stopSimulation()
+            break
+
+# Start the main control loop
+main()
+</pre>
+<p></p><br />HW1_Exam << <a href='HW1_Exam.html'>Previous</a> <a href='w15.html'>Next</a> >> w15</div>
         
     <!-- footer -->
       <div class="container">
